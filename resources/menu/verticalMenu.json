@@ -1,0 +1,53 @@
+{
+  "menu": [
+    {
+      "url": "/",
+      "name": "Halaman Utama",
+      "icon": "menu-icon tf-icons bx bx-home-smile",
+      "slug": "dashboard"
+    },
+    {
+      "menuHeader": "Data dan Penilaian"
+    },
+    {
+      "name": "Data",
+      "icon": "menu-icon tf-icons bx bx-detail",
+      "slug": "forms",
+      "submenu": [
+        {
+          "url": "forms/basic-inputs-copy",
+          "name": "Data CPMI",
+          "slug": "forms-basic-inputs-copy"
+        },
+        {
+          "url": "forms/basic-inputs",
+          "name": "Data Kriteria",
+          "slug": "forms-basic-inputs"
+        },
+        {
+          "url": "forms-subkriteria-inputs",
+          "name": "Data Sub Kriteria",
+          "slug": "forms-subkriteria-inputs"
+        }
+      ]
+    },
+    {
+      "menuHeader": "Penilaian"
+    },
+    {
+      "url": "/penilaian",
+      "icon": "menu-icon tf-icons bx bx-table",
+      "name": "Data Penilaian",
+      "slug": "penilaian.index"
+    },
+    {
+      "menuHeader": "Laporan"
+    },
+    {
+      "url": "/penilaian/perhitungan",
+      "icon": "menu-icon tf-icons bx bx-file",
+      "name": "Laporan",
+      "slug": "penilaian.perhitungan"
+    }
+  ]
+}
