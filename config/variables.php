@@ -3,7 +3,7 @@
   return [
     "creatorName" => "ThemeSelection",
     "creatorUrl" => "https://themeselection.com",
-    "templateName" => "PT Qafco",
+    "templateName" => "PT QAFCO",
     "templateSuffix" => "Bootstrap Dashboard FREE",
     "templateVersion" => "2.0.0",
     "templateFree" => true,

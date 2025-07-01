@@ -1,36 +1,39 @@
 {
   "menu": [
     {
-      "url": "/",
+      "url": "/dashboard",
       "name": "Halaman Utama",
       "icon": "menu-icon tf-icons bx bx-home-smile",
-      "slug": "dashboard"
+      "slug": "dashboard-analytics"
     },
     {
-      "menuHeader": "Data dan Penilaian"
+      "menuHeader": "Data"
     },
     {
-      "name": "Data",
-      "icon": "menu-icon tf-icons bx bx-detail",
-      "slug": "forms",
-      "submenu": [
-        {
-          "url": "forms/basic-inputs-copy",
-          "name": "Data CPMI",
-          "slug": "forms-basic-inputs-copy"
-        },
-        {
-          "url": "forms/basic-inputs",
-          "name": "Data Kriteria",
-          "slug": "forms-basic-inputs"
-        },
-        {
-          "url": "forms-subkriteria-inputs",
-          "name": "Data Sub Kriteria",
-          "slug": "forms-subkriteria-inputs"
-        }
-      ]
+      "name": "Data CPMI",
+      "icon": "menu-icon tf-icons bx bx-user",
+      "url": "data-cpmi",
+      "slug": "data-cpmi-copy"
     },
+    {
+      "name": "Data Kriteria",
+      "icon": "menu-icon tf-icons bx bx-slider",
+      "url": "data-kriteria",
+      "slug": "data-kriteria.index"
+    },
+    {
+      "name": "Data Sub Kriteria",
+      "icon": "menu-icon tf-icons bx bx-list-ul",
+      "url": "data-subkriteria",
+      "slug": "data-subkriteria"
+    },
+    {
+  "name": "Manajemen User",
+  "icon": "menu-icon tf-icons bx bx-user-circle",
+  "url": "users",
+  "slug": "users.index",
+  "role": "superadmin"
+},
     {
       "menuHeader": "Penilaian"
     },
@@ -41,13 +44,37 @@
       "slug": "penilaian.index"
     },
     {
-      "menuHeader": "Laporan"
+      "menuHeader": "Proses Perhitungan"
     },
     {
       "url": "/penilaian/perhitungan",
-      "icon": "menu-icon tf-icons bx bx-file",
-      "name": "Laporan",
+      "icon": "menu-icon tf-icons bx bx-calculator",
+      "name": "Proses SAW",
       "slug": "penilaian.perhitungan"
+    },
+    {
+      "menuHeader": "Rekomendasi"
+    },
+    {
+      "url": "/hasilpenilaian",
+      "icon": "menu-icon tf-icons bx bx-filter",
+      "name": "Filter Penilaian CPMI",
+      "slug": "hasilpenilaian.index"
+    },
+    {
+      "url": "/rekomendasi",
+      "icon": "menu-icon tf-icons bx bx-like",
+      "name": "Daftar Rekomendasi",
+      "slug": "rekomendasi.index"
+    },
+    {
+      "menuHeader": "Riwayat"
+    },
+    {
+      "url": "/penilaian-histori",
+      "icon": "menu-icon tf-icons bx bx-history",
+      "name": "Riwayat Penilaian",
+      "slug": "penilaian.histori"
     }
   ]
 }

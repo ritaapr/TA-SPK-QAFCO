@@ -29,7 +29,7 @@ $bootstrap-colors: () !default;
   }
 }
 
-@include template-navbar-style('.navbar.bg-white', #fff, $color: $body-color, $active-color: $headings-color);
+@include template-navbar-style('.navbar.bg-white', #2b7a94, $color: $body-color, $active-color: $headings-color);
 @include template-navbar-style('.navbar.bg-light', $gray-100, $color: $body-color, $active-color: $headings-color);
 
 // * Footer

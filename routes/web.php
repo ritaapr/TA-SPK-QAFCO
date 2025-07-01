@@ -2,74 +2,91 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\dashboard\Analytics;
-
 use App\Http\Controllers\authentications\LoginBasic;
-
-use App\Http\Controllers\form_elements\BasicInput;
-
-use App\Http\Controllers\form_elements\BasicInputCopy;
-
-use App\Http\Controllers\form_layouts\VerticalForm;
-use App\Http\Controllers\form_layouts\HorizontalForm;
-use App\Http\Controllers\form_layouts\PenilaianController;
-use App\Http\Controllers\tables\Basic as TablesBasic;
+use App\Http\Controllers\data\KriteriaController;
+use App\Http\Controllers\data\CpmiController;
+use App\Http\Controllers\data\SubkriteriaController;
+use App\Http\Controllers\data\UserController;
+use App\Http\Controllers\authentications\AccountController;
+use App\Http\Controllers\penilaian\PenilaianController;
+use App\Http\Controllers\history\HasilPenilaianController;
+use App\Http\Controllers\rekomendasi\RekomendasiController;
 
 Route::get('/', [LoginBasic::class, 'index'])->name('login');
 Route::post('/login', [LoginBasic::class, 'authenticate'])->name('login.post');
 Route::post('/logout', [LoginBasic::class, 'logout'])->name('logout');
 
-Route::middleware('auth')->group(function () {
+// Main Page Route
+Route::get('/dashboard', [Analytics::class, 'index'])->name('dashboard-analytics');
 
-    // Main Page Route
-    Route::get('/dashboard', [Analytics::class, 'index'])->name('dashboard-analytics');
+// Data CPMI fix
+Route::get('/data-cpmi', [CpmiController::class, 'index'])->name('data-cpmi-copy');
+Route::get('/data-cpmi/create', [CpmiController::class, 'create'])->name('data-cpmi-copy.create');
+Route::post('/data-cpmi', [CpmiController::class, 'store'])->name('data-cpmi-copy.store');
+Route::get('/data-cpmi/{id}/edit', [CpmiController::class, 'edit'])->name('data-cpmi-copy.edit');
+Route::put('/data-cpmi/{id}', [CpmiController::class, 'update'])->name('data-cpmi-copy.update');
+Route::delete('/data-cpmi/{id}', [CpmiController::class, 'destroy'])->name('data-cpmi-copy.destroy');
 
-
-    // form elements
-    Route::get('/forms/basic-inputs', [BasicInput::class, 'index'])->name('forms-basic-inputs');
-    // Route::get('/forms/input-groups', [InputSubkriteria::class, 'index'])->name('forms-input-groups');
-
-    // Data CPMI fix
-    Route::get('/forms/basic-inputs-copy', [BasicInputCopy::class, 'index'])->name('forms-basic-inputs-copy');
-    Route::get('/forms/basic-inputs-copy/create', [BasicInputCopy::class, 'create'])->name('forms-basic-inputs-copy.create');
-    Route::post('/forms/basic-inputs-copy/store', [BasicInputCopy::class, 'store'])->name('forms-basic-inputs-copy.store');
-    Route::get('/forms/basic-inputs-copy/{id}/edit', [BasicInputCopy::class, 'edit'])->name('forms-basic-inputs-copy.edit');
-    Route::put('/forms/basic-inputs-copy/{id}', [BasicInputCopy::class, 'update'])->name('forms-basic-inputs-copy.update');
-    Route::delete('/forms/basic-inputs-copy/{id}', [BasicInputCopy::class, 'destroy'])->name('forms-basic-inputs-copy.destroy');
-
-    Route::resource('forms-kriteria-inputs', \App\Http\Controllers\form_elements\BasicInput::class);
-    Route::post('/hitung-bobot', [BasicInput::class, 'hitungBobot'])->name('kriteria.hitungBobot');
-    Route::post('update-bobot/{id}', [\App\Http\Controllers\form_elements\BasicInput::class, 'updateBobot'])->name('update-bobot');
-    Route::post('/path/to/store/bobot', [BasicInput::class, 'hitungBobotSemua']);
+// Kriteria
+Route::resource('data-kriteria', KriteriaController::class);
+Route::post('/hitung-bobot', [KriteriaController::class, 'hitungBobot'])->name('kriteria.hitungBobot');
+Route::get('/kriteria/{id}/subkriteria', [KriteriaController::class, 'getSubkriteria']);
+Route::post('/reset-bobot', [KriteriaController::class, 'resetBobot'])->name('kriteria.resetBobot');
 
 
-    //Route::resource('forms-subkriteria-inputs', \App\Http\Controllers\form_elements\InputSubkriteria::class);
-    Route::resource('forms-subkriteria-inputs', \App\Http\Controllers\form_elements\InputSubkriteria::class)
-        ->names([
-            'index' => 'forms-subkriteria-inputs',
-            'create' => 'forms-subkriteria-inputs.create',
-            'store' => 'forms-subkriteria-inputs.store',
-            'edit' => 'forms-subkriteria-inputs.edit',
-            'update' => 'forms-subkriteria-inputs.update',
-            'destroy' => 'forms-subkriteria-inputs.destroy',
-            'show' => 'forms-subkriteria-inputs.show',
-        ]);
+Route::middleware(['auth', 'role:superadmin'])->group(function () {
 
+    // Data User
+    Route::resource('users', UserController::class);
+    Route::get('/hasilpenilaian', [HasilPenilaianController::class, 'index'])->name('hasilpenilaian.index');
+    Route::get('/get-subkriteria/{id}', [KriteriaController::class, 'getSubkriteria']);
 
-    // penilaian
-    Route::get('/penilaian', [PenilaianController::class, 'index'])->name('penilaian.index');
-    Route::get('/penilaian/create', [PenilaianController::class, 'create'])->name('penilaian.create');
-    Route::post('/penilaian/store', [PenilaianController::class, 'store'])->name('penilaian.store');
-
-    // proses spk saw
-    Route::get('/penilaian/perhitungan', [PenilaianController::class, 'perhitungan'])->name('penilaian.perhitungan');
-    Route::get('/penilaian/export-pdf', [PenilaianController::class, 'exportPdf'])->name('penilaian.export-pdf');
-
-
-    // form layouts
-    Route::get('/form/layouts-vertical', [VerticalForm::class, 'index'])->name('form-layouts-vertical');
-
-    Route::get('/form/layouts-horizontal', [HorizontalForm::class, 'index'])->name('form-layouts-horizontal');
-
-    // tables
-    Route::get('/tables/basic', [TablesBasic::class, 'index'])->name('tables-basic');
+    Route::post('/hasilpenilaian/ajax-filter', [HasilPenilaianController::class, 'ajaxFilter'])->name('hasilpenilaian.ajaxFilter');
+    Route::post('/hasilpenilaian/export-filtered', [HasilPenilaianController::class, 'exportFiltered'])->name('hasilpenilaian.exportFiltered');
 });
+
+Route::post('/rekomendasi', [RekomendasiController::class, 'store'])->name('rekomendasi.store');
+Route::get('/rekomendasi', [RekomendasiController::class, 'index'])->name('rekomendasi.index');
+Route::get('/rekomendasi/export-pdf', [RekomendasiController::class, 'exportPdf'])->name('rekomendasi.export-pdf');
+// Route::middleware(['auth', 'role:admin'])->group(function () {
+
+
+
+// });
+
+// Subkriteria
+Route::resource('data-subkriteria', SubkriteriaController::class)
+    ->parameters(['data-subkriteria' => 'subkriteria']) // ganti binding jadi 'subkriteria'
+    ->names([
+        'index' => 'data-subkriteria',
+        'create' => 'data-subkriteria.create',
+        'store' => 'data-subkriteria.store',
+        'edit' => 'data-subkriteria.edit',
+        'update' => 'data-subkriteria.update',
+        'destroy' => 'data-subkriteria.destroy',
+        'show' => 'data-subkriteria.show',
+    ]);
+
+// penilaian
+Route::get('/penilaian', [PenilaianController::class, 'index'])->name('penilaian.index');
+Route::post('/penilaian/store', [PenilaianController::class, 'store'])->name('penilaian.store');
+
+Route::get('/penilaian/{id}/edit', [PenilaianController::class, 'edit'])->name('penilaian.edit');
+Route::put('/penilaian/{id}', [PenilaianController::class, 'update'])->name('penilaian.update');
+Route::delete('/penilaian/{id}', [PenilaianController::class, 'destroy'])->name('penilaian.destroy');
+
+// proses spk saw
+Route::get('/penilaian/perhitungan', [PenilaianController::class, 'perhitungan'])->name('penilaian.perhitungan');
+Route::get('/penilaian/export-pdf', [PenilaianController::class, 'exportPdf'])->name('penilaian.export-pdf');
+
+
+
+Route::get('/penilaian-histori', [HasilPenilaianController::class, 'histori'])->name('penilaian.histori');
+Route::get('/penilaian-histori/{cpmi}', [HasilPenilaianController::class, 'historiDetail'])->name('penilaian.histori.detail');
+
+// edit profile
+Route::get('/account/settings', [AccountController::class, 'edit'])->name('account.settings');
+Route::post('/account/settings', [AccountController::class, 'update'])->name('account.settings.update');
+
+//logout
+Route::post('/logout', [LoginBasic::class, 'logout'])->name('logout');

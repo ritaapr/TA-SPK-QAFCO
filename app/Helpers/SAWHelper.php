@@ -8,16 +8,21 @@ class SAWHelper
     public static function generateMatrix($penilaianList)
 {
     $matrix = [];
+    $errors = [];
 
     foreach ($penilaianList as $item) {
+        $cpmiId = $item->cpmi_id;
+        $kriteriaId = $item->kriteria_id;
+
         if ($item->subkriteria) {
-            $matrix[$item->cpmi_id][$item->kriteria_id] = $item->subkriteria->nilai;
+            $matrix[$cpmiId][$kriteriaId] = $item->subkriteria->nilai;
         } else {
-            $matrix[$item->cpmi_id][$item->kriteria_id] = 0; // fallback nilai
+            $matrix[$cpmiId][$kriteriaId] = null; // null agar bisa dideteksi
+            $errors[] = "CPMI ID <strong>{$cpmiId}</strong> belum memiliki penilaian untuk kriteria ID <strong>{$kriteriaId}</strong>.";
         }
     }
 
-    return $matrix;
+    return [$matrix, $errors];
 }
 
 

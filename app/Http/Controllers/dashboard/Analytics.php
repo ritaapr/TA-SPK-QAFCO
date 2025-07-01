@@ -5,6 +5,11 @@ namespace App\Http\Controllers\dashboard;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Kriteria;
+use App\Models\Cpmi;
+use App\Models\Penilaian;
+use App\Models\Rekomendasi;
+use App\Helpers\SAWHelper;
+
 
 class Analytics extends Controller
 {
@@ -12,11 +17,14 @@ class Analytics extends Controller
   {
 
     $kriteria = Kriteria::all();
-$totalKriteria = $kriteria->count();
-$labels = $kriteria->pluck('nama_kriteria');
-$bobot = $kriteria->pluck('bobot');
+    $totalKriteria = $kriteria->count();
+    $rekomendasi = Rekomendasi::all();
+    $totalRekomendasi = Rekomendasi::count();
 
-return view('content.dashboard.dashboards-analytics', compact('kriteria', 'totalKriteria', 'labels', 'bobot'));
-
+    return view('content.dashboard.dashboards-analytics', compact(
+      'kriteria',
+      'totalKriteria',
+      'totalRekomendasi'
+    ));
   }
 }

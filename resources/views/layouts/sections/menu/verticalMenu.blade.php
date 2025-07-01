@@ -16,7 +16,33 @@
   <div class="menu-inner-shadow"></div>
 
   <ul class="menu-inner py-1">
-    @foreach ($menuData[0]->menu as $menu)
+
+    @php
+  $role = auth()->user()->role;
+  $menuList = $menuData[0]->menu;
+
+  // Hanya filter kalau role adalah admin
+  if ($role === 'admin') {
+      $allowedSlugs = [
+          'dashboard-analytics',
+          'data-cpmi-copy',
+          'data-kriteria.index',
+          'data-subkriteria',
+          'penilaian.index',
+          'penilaian.perhitungan',
+          'rekomendasi.index',
+          'penilaian.histori'
+      ];
+
+      // filter menu berdasarkan slug
+      $menuList = collect($menuList)->filter(function ($item) use ($allowedSlugs) {
+          return isset($item->menuHeader) || (isset($item->slug) && in_array($item->slug, $allowedSlugs));
+      });
+  }
+@endphp
+
+    @foreach ($menuList as $menu)
+
 
       {{-- adding active and open class if child is active --}}
 
