@@ -58,7 +58,7 @@
     {
       "url": "/hasilpenilaian",
       "icon": "menu-icon tf-icons bx bx-filter",
-      "name": "Filter Penilaian CPMI",
+      "name": "Seleksi CPMI",
       "slug": "hasilpenilaian.index"
     },
     {
@@ -71,10 +71,10 @@
       "menuHeader": "Riwayat"
     },
     {
-      "url": "/penilaian-histori",
+      "url": "/rekomendasi-histori",
       "icon": "menu-icon tf-icons bx bx-history",
       "name": "Riwayat Penilaian",
-      "slug": "penilaian.histori"
+      "slug": "rekomendasi.histori"
     }
   ]
 }

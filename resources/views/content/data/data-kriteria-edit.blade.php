@@ -3,7 +3,7 @@
 @section('title', 'Basic Inputs - Forms')
 
 @section('page-script')
-    @vite('resources/assets/js/form-basic-inputs-copy.js')
+    @vite('resources/assets/js/form-basic-inputs.js')
 @endsection
 
 @section('content')

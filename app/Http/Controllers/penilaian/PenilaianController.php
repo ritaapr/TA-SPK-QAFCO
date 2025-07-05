@@ -10,143 +10,94 @@ use App\Models\Penilaian;
 use App\Models\Subkriteria;
 use App\Helpers\SAWHelper;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Auth;
 
 class PenilaianController extends Controller
 {
     public function index()
     {
         $kriteriaList = Kriteria::all();
-        $cpmiList = Cpmi::with(['penilaians.subkriteria'])->get();
 
+        $cpmiList = Cpmi::with(['penilaian.subkriteria'])
+    ->whereNotIn('id', function ($query) {
+        $query->select('cpmi_id')->from('rekomendasi');
+    })
+    ->get();
         return view('content.form-layout.penilaian-index', compact('kriteriaList', 'cpmiList'));
     }
 
-    public function create() {}
-
     public function store(Request $request)
-{
-    $request->validate([
-        'cpmi_id' => 'required|exists:cpmi,id',
-        'penilaian' => 'array',
-        'kriteria' => 'array',
-    ]);
-
-    Penilaian::where('cpmi_id', $request->cpmi_id)->delete();
-
-    // Input number
-    if ($request->has('penilaian')) {
-        foreach ($request->penilaian as $kriteriaId => $inputValue) {
-            $sub = Subkriteria::where('kriteria_id', $kriteriaId)
-                ->where('batas_bawah', '<=', $inputValue)
-                ->where('batas_atas', '>=', $inputValue)
-                ->first();
-
-            if (!$sub) {
-                return back()->with('error', "Tidak ada subkriteria yang cocok untuk nilai $inputValue pada kriteria ID $kriteriaId");
-            }
-
-            Penilaian::create([
-                'cpmi_id' => $request->cpmi_id,
-                'kriteria_id' => $kriteriaId,
-                'subkriteria_id' => $sub->id,
-                'nilai' => $sub->nilai,
-            ]);
-        }
-    }
-
-    // Dropdown
-    if ($request->has('kriteria')) {
-        foreach ($request->kriteria as $kriteriaId => $subkriteriaId) {
-            $sub = Subkriteria::find($subkriteriaId);
-            if ($sub) {
-                Penilaian::create([
-                    'cpmi_id' => $request->cpmi_id,
-                    'kriteria_id' => $kriteriaId,
-                    'subkriteria_id' => $sub->id,
-                    'nilai' => $sub->nilai,
-                ]);
-            }
-        }
-    }
-
-    return redirect()->route('penilaian.index')->with('success', 'Penilaian berhasil disimpan!');
-}
-
-
-    public function edit($cpmi_id)
     {
-        $cpmiList = Cpmi::all();
-        $kriteriaList = Kriteria::with('subkriterias')->get();
-        $cpmi = Cpmi::with('penilaians')->findOrFail($cpmi_id);
+        $request->validate([
+            'cpmi_id' => 'required|exists:cpmi,id',
+            'penilaian' => 'array',
+            'kriteria' => 'array',
+        ]);
 
-        return view('content.form-layout.penilaian-index', compact('cpmiList', 'kriteriaList', 'cpmi'));
-    }
-public function update(Request $request, $cpmi_id)
-{
-    $request->validate([
-        'penilaian' => 'array',
-        'kriteria' => 'array',
-    ]);
+        // Hapus penilaian sementara lama
+        Penilaian::where('cpmi_id', $request->cpmi_id)->delete();
 
-    // Hapus semua penilaian lama untuk CPMI
-    Penilaian::where('cpmi_id', $cpmi_id)->delete();
-
-    // Proses nilai dari input angka
-    if ($request->has('penilaian')) {
-        foreach ($request->penilaian as $kriteriaId => $inputValue) {
-            $sub = Subkriteria::where('kriteria_id', $kriteriaId)
-                ->where('batas_bawah', '<=', $inputValue)
-                ->where('batas_atas', '>=', $inputValue)
-                ->first();
-
-            if (!$sub) {
-                return back()->with('error', "Tidak ada subkriteria yang cocok untuk nilai $inputValue pada kriteria ID $kriteriaId");
+        try {
+            if ($request->has('penilaian')) {
+                foreach ($request->penilaian as $kriteriaId => $inputValue) {
+                    $this->simpanSementara($request->cpmi_id, $kriteriaId, $inputValue);
+                }
             }
 
-            Penilaian::create([
-                'cpmi_id' => $cpmi_id,
-                'kriteria_id' => $kriteriaId,
-                'subkriteria_id' => $sub->id,
-                'nilai' => $sub->nilai,
-            ]);
-        }
-    }
-
-    // Proses nilai dari dropdown
-    if ($request->has('kriteria')) {
-        foreach ($request->kriteria as $kriteriaId => $subkriteriaId) {
-            $sub = Subkriteria::find($subkriteriaId);
-            if ($sub) {
-                Penilaian::create([
-                    'cpmi_id' => $cpmi_id,
-                    'kriteria_id' => $kriteriaId,
-                    'subkriteria_id' => $sub->id,
-                    'nilai' => $sub->nilai,
-                ]);
+            if ($request->has('kriteria')) {
+                foreach ($request->kriteria as $kriteriaId => $subkriteriaId) {
+                    $this->simpanSementara($request->cpmi_id, $kriteriaId, null, $subkriteriaId);
+                }
             }
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
         }
+
+        return redirect()->route('penilaian.index')->with('success', 'Penilaian berhasil disimpan!');
     }
 
-    return redirect()->route('penilaian.index')->with('success', 'Penilaian CPMI berhasil diperbarui!');
-}
+    public function update(Request $request, $cpmi_id)
+    {
+        $request->validate([
+            'penilaian' => 'array',
+            'kriteria' => 'array',
+        ]);
 
+        Penilaian::where('cpmi_id', $cpmi_id)->delete();
+
+        try {
+            if ($request->has('penilaian')) {
+                foreach ($request->penilaian as $kriteriaId => $inputValue) {
+                    $this->simpanSementara($cpmi_id, $kriteriaId, $inputValue);
+                }
+            }
+
+            if ($request->has('kriteria')) {
+                foreach ($request->kriteria as $kriteriaId => $subkriteriaId) {
+                    $this->simpanSementara($cpmi_id, $kriteriaId, null, $subkriteriaId);
+                }
+            }
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
+
+        return redirect()->route('penilaian.index')->with('success', 'Penilaian berhasil diperbarui!');
+    }
 
     public function destroy($cpmi_id)
     {
         Penilaian::where('cpmi_id', $cpmi_id)->delete();
-        return redirect()->route('penilaian.index')->with('success', 'Penilaian CPMI berhasil dihapus.');
+        return redirect()->route('penilaian.index')->with('success', 'Penilaian berhasil dihapus.');
     }
 
     public function perhitungan()
     {
         $kriteriaList = Kriteria::all();
+
+        // Penilaian SEMENTARA
         $penilaianList = Penilaian::with(['subkriteria'])->get();
-        // Ambil ID CPMI yang sudah direkomendasikan (sudah punya histori)
-$rekomendasiIds = \App\Models\Rekomendasi::pluck('cpmi_id');
-
-// Ambil hanya CPMI yang belum direkomendasikan
-$cpmiList = \App\Models\Cpmi::whereNotIn('id', $rekomendasiIds)->get();
-
+        $cpmiIds = $penilaianList->pluck('cpmi_id')->unique()->toArray();
+        $cpmiList = Cpmi::whereIn('id', $cpmiIds)->get();
 
         [$matrix, $errors] = SAWHelper::generateMatrix($penilaianList);
 
@@ -159,7 +110,12 @@ $cpmiList = \App\Models\Cpmi::whereNotIn('id', $rekomendasiIds)->get();
         $ranking = SAWHelper::ranking($terbobot);
 
         return view('content.form-layout.penilaian-perhitungan', compact(
-            'cpmiList', 'kriteriaList', 'matrix', 'normalisasi', 'terbobot', 'ranking'
+            'cpmiList',
+            'kriteriaList',
+            'matrix',
+            'normalisasi',
+            'terbobot',
+            'ranking'
         ));
     }
 
@@ -167,7 +123,7 @@ $cpmiList = \App\Models\Cpmi::whereNotIn('id', $rekomendasiIds)->get();
     {
         $cpmiList = Cpmi::all();
         $kriteriaList = Kriteria::all();
-        $penilaian = Penilaian::with(['cpmi', 'kriteria', 'subkriteria'])->get();
+        $penilaian = \App\Models\PenilaianHistori::with(['cpmi', 'kriteria', 'subkriteria'])->get();
 
         [$matrix, ] = SAWHelper::generateMatrix($penilaian);
         $normalisasi = SAWHelper::normalisasi($matrix, $kriteriaList);
@@ -183,5 +139,28 @@ $cpmiList = \App\Models\Cpmi::whereNotIn('id', $rekomendasiIds)->get();
         return $pdf->download('laporan-ranking-cpmi.pdf');
     }
 
+    // Fungsi bantu: simpan ke penilaian sementara
+    private function simpanSementara($cpmi_id, $kriteria_id, $nilai = null, $subkriteria_id = null)
+    {
+        if ($subkriteria_id) {
+            $sub = Subkriteria::find($subkriteria_id);
+        } else {
+            $sub = Subkriteria::where('kriteria_id', $kriteria_id)
+                ->where('batas_bawah', '<=', $nilai)
+                ->where('batas_atas', '>=', $nilai)
+                ->first();
 
+            if (!$sub) {
+                throw new \Exception("Tidak ada subkriteria yang cocok untuk nilai $nilai pada kriteria ID $kriteria_id");
+            }
+        }
+
+        return Penilaian::create([
+            'cpmi_id' => $cpmi_id,
+            'kriteria_id' => $kriteria_id,
+            'subkriteria_id' => $sub->id,
+            'nilai' => $sub->nilai,
+            'user_id' => Auth::id(),
+        ]);
+    }
 }

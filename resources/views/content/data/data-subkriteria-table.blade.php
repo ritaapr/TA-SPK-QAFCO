@@ -2,14 +2,13 @@
 
 @section('title', 'Data Subkriteria')
 @section('page-script')
-    @vite('resources/assets/js/form-basic-inputs-copy.js')
+    @vite('resources/assets/js/form-basic-inputs.js')
     @vite('resources/assets/js/success-message.js')
     @vite('resources/assets/js/delete-sweetalert.js')
     @vite('resources/assets/js/ambil-dropdown-kriteria.js')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @endsection
 @section('content')
-
 
     {{-- Blade Layout --}}
 
@@ -36,10 +35,10 @@
 
                     {{-- Tombol Tambah --}}
                     @if (auth()->user()->role === 'superadmin')
-                    <a href="javascript:void(0);" class="btn rounded-pill btn-primary" data-bs-toggle="modal"
-                        data-bs-target="#modalTambahSubkriteria">
-                        <span class="tf-icons bx bx-plus bx-18px me-2"></span>Tambah Data
-                    </a>
+                        <a href="javascript:void(0);" class="btn rounded-pill btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#modalTambahSubkriteria">
+                            <span class="tf-icons bx bx-plus bx-18px me-2"></span>Tambah Data
+                        </a>
                     @endif
                 </div>
             </div>
@@ -58,17 +57,17 @@
                                 <th>Batas Atas</th>
                                 <th>Nilai</th>
                                 @if (auth()->user()->role === 'superadmin')
-                                <th>Actions</th>
+                                    <th>Actions</th>
                                 @endif
                             </tr>
                         </thead>
                         <tbody>
                             @forelse ($filteredKriterias as $kriteria)
                                 <tr class="table-secondary">
-    <td colspan="{{ auth()->user()->role === 'superadmin' ? 6 : 5 }}">
-        <strong>{{ $kriteria->nama_kriteria }}</strong>
-    </td>
-</tr>
+                                    <td colspan="{{ auth()->user()->role === 'superadmin' ? 6 : 5 }}">
+                                        <strong>{{ $kriteria->nama_kriteria }}</strong>
+                                    </td>
+                                </tr>
 
 
                                 @forelse ($kriteria->subkriterias as $index => $subkriteria)
@@ -78,47 +77,47 @@
                                         <td>{{ $subkriteria->batas_bawah ?? '-' }}</td>
                                         <td>{{ $subkriteria->batas_atas ?? '-' }}</td>
                                         <td>{{ $subkriteria->nilai }}</td>
-                                         @if (auth()->user()->role === 'superadmin')
-                                        <td class="text-center align-middle">
-                                           
-                                            <!-- Tombol Edit -->
-                                            <a href="{{ route('data-subkriteria.edit', ['subkriteria' => $subkriteria->id, 'kriteria_id' => request('kriteria_id')]) }}"
+                                        @if (auth()->user()->role === 'superadmin')
+                                            <td class="text-center align-middle">
 
-                                                class="btn btn-sm btn-icon btn-primary me-1" title="Edit">
-                                                <i class="bx bx-edit-alt"></i>
-                                            </a>
+                                                <!-- Tombol Edit -->
+                                                <a href="{{ route('data-subkriteria.edit', ['subkriteria' => $subkriteria->id, 'kriteria_id' => request('kriteria_id')]) }}"
+                                                    class="btn btn-sm btn-icon btn-primary me-1" title="Edit">
+                                                    <i class="bx bx-edit-alt"></i>
+                                                </a>
 
-                                            <!-- Tombol Delete -->
-                                            <form method="POST" class="d-inline delete-form"
-                                                data-id="{{ $subkriteria->id }}"
-                                                data-action="{{ route('data-subkriteria.destroy', $subkriteria->id) }}">
-                                                <input type="hidden" name="redirect_kriteria_id"
-                                                    value="{{ request('kriteria_id') }}">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button" class="btn btn-sm btn-icon btn-danger btn-delete"
-                                                    title="Delete">
-                                                    <i class="bx bx-trash"></i>
-                                                </button>
-                                            </form>
-                                            
-                                        </td>
-@endif
+                                                <!-- Tombol Delete -->
+                                                <form method="POST" class="d-inline delete-form"
+                                                    data-id="{{ $subkriteria->id }}"
+                                                    data-action="{{ route('data-subkriteria.destroy', $subkriteria->id) }}">
+                                                    <input type="hidden" name="redirect_kriteria_id"
+                                                        value="{{ request('kriteria_id') }}">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" class="btn btn-sm btn-icon btn-danger btn-delete"
+                                                        title="Delete">
+                                                        <i class="bx bx-trash"></i>
+                                                    </button>
+                                                </form>
+
+                                            </td>
+                                        @endif
                                     </tr>
                                 @empty
                                     <tr>
-    <td colspan="{{ auth()->user()->role === 'superadmin' ? 6 : 5 }}" class="text-center text-muted">
-        Belum ada subkriteria untuk kriteria ini.
-    </td>
-</tr>
-
+                                        <td colspan="{{ auth()->user()->role === 'superadmin' ? 6 : 5 }}"
+                                            class="text-center text-muted">
+                                            Belum ada subkriteria untuk kriteria ini.
+                                        </td>
+                                    </tr>
                                 @endforelse
                             @empty
                                 <tr>
-    <td colspan="{{ auth()->user()->role === 'superadmin' ? 6 : 5 }}" class="text-center text-muted">
-        Data tidak ditemukan.
-    </td>
-</tr>
+                                    <td colspan="{{ auth()->user()->role === 'superadmin' ? 6 : 5 }}"
+                                        class="text-center text-muted">
+                                        Data tidak ditemukan.
+                                    </td>
+                                </tr>
 
                             @endforelse
                         </tbody>

@@ -3,7 +3,7 @@
 @section('title', 'Data Kriteria')
 
 @section('page-script')
-    @vite('resources/assets/js/form-basic-inputs-copy.js')
+    @vite('resources/assets/js/form-basic-inputs.js')
     @vite('resources/assets/js/success-message.js')
     <script>
         document.getElementById('hitungsemua').addEventListener('click', function() {

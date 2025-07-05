@@ -40,12 +40,7 @@
         <div class="col-lg-4 col-md-6 col-12 mb-4">
             <div class="card h-100">
                 <div class="card-body">
-                    <div class="card-title d-flex align-items-start justify-content-between mb-4">
-                        <div class="avatar flex-shrink-0">
-                            <img src="{{ asset('assets/img/icons/unicons/chart-success.png') }}" alt="chart success"
-                                class="rounded">
-                        </div>
-                    </div>
+
                     <p class="mb-1">Jumlah Rekomendasi</p>
                     <h4 class="card-title mb-3">{{ $totalRekomendasi }}</h4>
                     <small class="text-primary fw-medium">
@@ -60,12 +55,7 @@
         <div class="col-lg-4 col-md-6 col-12 mb-4">
             <div class="card h-100">
                 <div class="card-body">
-                    <div class="card-title d-flex align-items-start justify-content-between mb-4">
-                        <div class="avatar flex-shrink-0">
-                            <img src="{{ asset('assets/img/icons/unicons/wallet-info.png') }}" alt="wallet info"
-                                class="rounded">
-                        </div>
-                    </div>
+
                     <p class="mb-1">Jumlah Kriteria</p>
                     <h4 class="card-title mb-3">{{ $totalKriteria }}</h4>
                     <small class="text-warning fw-medium">
@@ -75,5 +65,53 @@
                 </div>
             </div>
         </div>
+
+            <div class="col-12 mt-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Jumlah Rekomendasi per Bulan</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="chartRekomendasi"></div>
+                    </div>
+                </div>
+            </div>
+  
+
     </div>
+
+@section('page-script')
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const options = {
+                chart: {
+                    type: 'line',
+                    height: 350
+                },
+                series: [{
+                    name: 'Rekomendasi',
+                    data: @json($chartData)
+                }],
+                xaxis: {
+                    categories: @json($chartLabels),
+                },
+                yaxis: {
+                    labels: {
+                        formatter: function(value) {
+                            return Math.round(value);
+                        }
+                    },
+                },
+                stroke: {
+                    curve: 'smooth'
+                },
+                colors: ['#696CFF']
+            };
+
+            const chart = new ApexCharts(document.querySelector("#chartRekomendasi"), options);
+            chart.render();
+        });
+    </script>
+@endsection
+
 @endsection

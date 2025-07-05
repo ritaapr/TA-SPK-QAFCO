@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\RekomendasiHistori;
+
 
 class Rekomendasi extends Model
 {
@@ -17,9 +19,6 @@ class Rekomendasi extends Model
         return $this->belongsTo(Cpmi::class);
     }
 
-    public function histori()
-{
-    return $this->hasMany(\App\Models\PenilaianHistori::class, 'cpmi_id', 'cpmi_id');
-}
+    
 
 }

@@ -12,7 +12,7 @@ class Cpmi extends Model
     use HasFactory;
 
     protected $table = 'cpmi';
-    
+
     protected $fillable = [
         'nama_cpmi',
         'nik',
@@ -22,17 +22,19 @@ class Cpmi extends Model
         'foto_profil',
     ];
 
-     public function penilaians()
+    public function penilaian()
     {
         return $this->hasMany(Penilaian::class);
     }
 
     public function penilaianHistori()
-{
-    return $this->hasMany(PenilaianHistori::class);
-}
+    {
+        return $this->hasMany(PenilaianHistori::class, 'cpmi_id');
+    }
 
-public function isDirekomendasikan()
+    
+
+  public function isDirekomendasikan()
 {
     return $this->penilaianHistori()->exists();
 }

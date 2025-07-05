@@ -15,7 +15,14 @@ class Penilaian extends Model
         'cpmi_id',
         'kriteria_id',
         'subkriteria_id',
+     // jika kamu menyimpan nilai juga
+        'user_id',       // tambahkan ini!
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function cpmi()
     {
@@ -32,4 +39,3 @@ class Penilaian extends Model
         return $this->belongsTo(Subkriteria::class);
     }
 }
-

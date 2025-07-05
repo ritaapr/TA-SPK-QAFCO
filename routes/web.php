@@ -9,8 +9,9 @@ use App\Http\Controllers\data\SubkriteriaController;
 use App\Http\Controllers\data\UserController;
 use App\Http\Controllers\authentications\AccountController;
 use App\Http\Controllers\penilaian\PenilaianController;
-use App\Http\Controllers\history\HasilPenilaianController;
+use App\Http\Controllers\history\SeleksiController;
 use App\Http\Controllers\rekomendasi\RekomendasiController;
+use App\Http\Controllers\penilaian\HistoriPenilaianController;
 
 Route::get('/', [LoginBasic::class, 'index'])->name('login');
 Route::post('/login', [LoginBasic::class, 'authenticate'])->name('login.post');
@@ -38,16 +39,21 @@ Route::middleware(['auth', 'role:superadmin'])->group(function () {
 
     // Data User
     Route::resource('users', UserController::class);
-    Route::get('/hasilpenilaian', [HasilPenilaianController::class, 'index'])->name('hasilpenilaian.index');
-    Route::get('/get-subkriteria/{id}', [KriteriaController::class, 'getSubkriteria']);
 
-    Route::post('/hasilpenilaian/ajax-filter', [HasilPenilaianController::class, 'ajaxFilter'])->name('hasilpenilaian.ajaxFilter');
-    Route::post('/hasilpenilaian/export-filtered', [HasilPenilaianController::class, 'exportFiltered'])->name('hasilpenilaian.exportFiltered');
+    Route::get('/get-subkriteria/{id}', [KriteriaController::class, 'getSubkriteria']);
+    
+    Route::get('/hasilpenilaian', [SeleksiController::class, 'index'])->name('hasilpenilaian.index');
+    Route::post('/hasilpenilaian/ajax-filter', [SeleksiController::class, 'ajaxFilter'])->name('hasilpenilaian.ajaxFilter');
 });
 
 Route::post('/rekomendasi', [RekomendasiController::class, 'store'])->name('rekomendasi.store');
 Route::get('/rekomendasi', [RekomendasiController::class, 'index'])->name('rekomendasi.index');
 Route::get('/rekomendasi/export-pdf', [RekomendasiController::class, 'exportPdf'])->name('rekomendasi.export-pdf');
+
+Route::post('/rekomendasi/arsipkan', [RekomendasiController::class, 'arsipkan'])->name('rekomendasi.arsipkan');
+
+Route::get('/rekomendasi-histori', [HistoriPenilaianController::class, 'index'])->name('rekomendasi.histori');
+Route::get('/rekomendasi-histori/{cpmi}', [HistoriPenilaianController::class, 'detail'])->name('rekomendasi.histori.detail');
 // Route::middleware(['auth', 'role:admin'])->group(function () {
 
 
@@ -81,8 +87,6 @@ Route::get('/penilaian/export-pdf', [PenilaianController::class, 'exportPdf'])->
 
 
 
-Route::get('/penilaian-histori', [HasilPenilaianController::class, 'histori'])->name('penilaian.histori');
-Route::get('/penilaian-histori/{cpmi}', [HasilPenilaianController::class, 'historiDetail'])->name('penilaian.histori.detail');
 
 // edit profile
 Route::get('/account/settings', [AccountController::class, 'edit'])->name('account.settings');

@@ -34,7 +34,7 @@ class LoginBasic extends Controller
     }
 
     return back()->withErrors([
-      'email-username' => 'Login failed. Please check your credentials.',
+      'email-username' => 'Login gagal. Email atau password salah.',
     ])->onlyInput('email-username');
   }
 

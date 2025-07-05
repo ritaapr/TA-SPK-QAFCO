@@ -12,7 +12,7 @@ use App\Helpers\SAWHelper;
 use App\Models\Rekomendasi;
 use App\Models\PenilaianHistori;
 
-class HasilPenilaianController extends Controller
+class SeleksiController extends Controller
 {
     public function index()
     {
@@ -89,47 +89,5 @@ class HasilPenilaianController extends Controller
 
     // Tambahkan di atas kalau belum
 
-    public function histori()
-{
-    $kriteriaList = Kriteria::all();
-    $penilaianHistori = PenilaianHistori::with('subkriteria')->get();
-
-    // Cek jika histori kosong, langsung return view dengan pesan
-    if ($penilaianHistori->isEmpty()) {
-        $data = collect(); // supaya bisa pakai $data->isEmpty() di blade
-        $ranking = [];
-        return view('content.history.penilaian-histori', compact('data', 'ranking'));
-    }
-
-    [$matrix, $errors] = SAWHelper::generateMatrix($penilaianHistori);
-    $normalisasi = SAWHelper::normalisasi($matrix, $kriteriaList);
-    $terbobot = SAWHelper::hitungTerbobot($normalisasi, $kriteriaList);
-    $ranking = [];
-
-foreach ($penilaianHistori as $histori) {
-    if ($histori->nilai_saw !== null) {
-        $ranking[$histori->cpmi_id] = $histori->nilai_saw;
-    }
-}
-
-
-    $data = PenilaianHistori::with('cpmi')
-        ->whereIn('cpmi_id', array_keys($ranking))
-        ->get()
-        ->groupBy('cpmi_id');
-
-    return view('content.history.penilaian-histori', compact('data', 'ranking'));
-}
-
-
-    public function historiDetail($cpmiId)
-{
-    $cpmi = Cpmi::findOrFail($cpmiId);
-    $data = PenilaianHistori::with('kriteria', 'subkriteria')
-        ->where('cpmi_id', $cpmiId)
-        ->get();
-
-    return view('content.history.penilaian-histori-detail', compact('cpmi', 'data'));
-}
-
+   
 }

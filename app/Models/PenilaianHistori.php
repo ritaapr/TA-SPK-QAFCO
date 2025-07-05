@@ -13,27 +13,33 @@ class PenilaianHistori extends Model
 
     protected $fillable = [
         'cpmi_id',
+        'user_id',
         'kriteria_id',
         'subkriteria_id',
         'nilai',
-        'nilai_saw',
     ];
 
-    // Relasi ke model CPMI
+    // Relasi ke CPMI
     public function cpmi()
     {
-        return $this->belongsTo(Cpmi::class);
+        return $this->belongsTo(Cpmi::class, 'cpmi_id');
     }
 
-    // Relasi ke model Kriteria
+    // Relasi ke Kriteria
     public function kriteria()
     {
-        return $this->belongsTo(Kriteria::class);
+        return $this->belongsTo(Kriteria::class, 'kriteria_id');
     }
 
-    // Relasi ke model Subkriteria
+    // Relasi ke Subkriteria
     public function subkriteria()
     {
-        return $this->belongsTo(Subkriteria::class);
+        return $this->belongsTo(Subkriteria::class, 'subkriteria_id');
+    }
+
+    // Relasi ke User (opsional karena bisa null)
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

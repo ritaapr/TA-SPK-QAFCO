@@ -1,6 +1,6 @@
 @extends('layouts/contentNavbarLayout')
 
-@section('title', 'Filter Penilaian')
+@section('title', 'Seleksi CPMI')
 
 @section('page-script')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -18,7 +18,7 @@
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center flex-wrap">
                     <!-- Judul -->
-                    <h5 class="mb-0">Filter Penilaian berdasarkan Subkriteria</h5>
+                    <h5 class="mb-0">Seleksi CPMI berdasarkan Subkriteria</h5>
 
                     <!-- Filter Form -->
                     <form method="POST" action="#" id="filter-form" class="d-flex align-items-center gap-2">
@@ -36,8 +36,6 @@
                                 style="min-width: 200px">
                                 <option value="">Pilih Subkriteria</option>
                             </select>
-
-
                         </div>
                     </form>
                 </div>
@@ -118,7 +116,6 @@
                     if (typeof window.bindRekomendasiButtons === 'function') {
                         window.bindRekomendasiButtons();
                     }
-
                 });
         }
 

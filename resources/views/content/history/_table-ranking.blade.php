@@ -5,7 +5,6 @@
         </div>
 
         <div class="card-body table-responsive">
-
             <table class="table table-bordered">
                 <thead>
                     <tr>
@@ -26,8 +25,12 @@
                                     data-action="{{ route('rekomendasi.store') }}">
                                     @csrf
                                     <input type="hidden" name="cpmi_id" value="{{ $item['cpmi']->id }}">
+                                    <input type="hidden" name="nilai_saw" value="{{ $item['nilai'] }}">
+                                    <input type="hidden" name="ranking" value="{{ $index + 1 }}">
                                     <button type="button" class="btn btn-sm btn-primary btn-pilih">Pilih</button>
                                 </form>
+
+
 
                             </td>
                         </tr>

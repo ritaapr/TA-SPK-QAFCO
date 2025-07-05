@@ -72,39 +72,40 @@
                 <th>Nama</th>
                 <th>No HP</th>
                 <th>Alamat</th>
-                <th>Nilai SAW</th>
                 <th>Tanggal Rekomendasi</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($data as $i => $row)
-                @php
-                    $nilai = optional($row->histori->firstWhere('nilai_saw', '!=', null))?->nilai_saw ?? 0;
-                @endphp
-                <tr>
-                    <td>{{ $i + 1 }}</td>
-                    <td>{{ $row->cpmi->nama_cpmi }}</td>
-                    <td>{{ $row->cpmi->no_hp }}</td>
-                    <td>{{ $row->cpmi->alamat }}</td>
-                    <td>{{ number_format($nilai, 4) }}</td>
-                    <td>{{ $row->created_at->format('d-m-Y') }}</td>
-                </tr>
-                <tr>
-                    <td colspan="6">
-                        <strong>Rincian Penilaian:</strong>
-                        <ul>
-                            @foreach ($row->histori as $h)
-                                <li>
-                                    {{ $h->kriteria->nama_kriteria }}:
-                                    {{ $h->subkriteria->nama_subkriteria ?? '-' }}
-                                    ({{ $h->nilai }})
-                                </li>
-                            @endforeach
-                        </ul>
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
+@foreach ($data as $i => $row)
+    @php
+        $nilai = optional($row->cpmi->penilaianHistori->first())->nilai ?? 0;
+    @endphp
+    <tr>
+        <td>{{ $i + 1 }}</td>
+        <td>{{ $row->cpmi->nama_cpmi }}</td>
+        <td>{{ $row->cpmi->no_hp }}</td>
+        <td>{{ $row->cpmi->alamat }}</td>
+        <td>{{ $row->created_at->format('d-m-Y') }}</td>
+    </tr>
+    <tr>
+        <td colspan="6">
+            <strong>Rincian Penilaian:</strong>
+            <ul>
+                @forelse ($row->cpmi->penilaianHistori as $h)
+                    <li>
+                        {{ $h->kriteria->nama_kriteria ?? '-' }}:
+                        {{ $h->subkriteria->nama_subkriteria ?? '-' }}
+                        ({{ $h->nilai ?? '-' }})
+                    </li>
+                @empty
+                    <li>Belum ada histori penilaian.</li>
+                @endforelse
+            </ul>
+        </td>
+    </tr>
+@endforeach
+</tbody>
+
     </table>
 
     {{-- Tanda Tangan --}}
