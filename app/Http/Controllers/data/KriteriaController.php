@@ -10,18 +10,18 @@ class KriteriaController extends Controller
 {
     public function index()
     {
-        $kriterias = Kriteria::all();
-        $bobotTerkunci = $kriterias->first() ? $kriterias->first()->status_bobot : false;
+        $result = Kriteria::getAllWithStatus();
+        $kriterias = $result['data'];
+        $bobotTerkunci = $result['bobotTerkunci'];
+
         return view('content.data.data-kriteria-table', compact('kriterias', 'bobotTerkunci'));
     }
-
 
     public function getSubkriteria($id)
     {
         $kriteria = Kriteria::with('subkriterias')->findOrFail($id);
         return response()->json($kriteria->subkriterias);
     }
-
 
     public function create()
     {
@@ -34,10 +34,9 @@ class KriteriaController extends Controller
             'kode_kriteria' => 'required',
             'nama_kriteria' => 'required',
             'jenis' => 'required|in:benefit,cost',
-
         ]);
 
-        Kriteria::create($request->all());
+        Kriteria::tambahKriteria($request->only(['kode_kriteria', 'nama_kriteria', 'jenis']));
 
         return redirect()->route('data-kriteria.index')->with('success', 'Kriteria berhasil ditambahkan');
     }
@@ -54,11 +53,10 @@ class KriteriaController extends Controller
             'kode_kriteria' => 'required',
             'nama_kriteria' => 'required',
             'jenis' => 'required|in:benefit,cost',
-
         ]);
 
         $kriteria = Kriteria::findOrFail($id);
-        $kriteria->update($request->all());
+        $kriteria->perbaruiKriteria($request->only(['kode_kriteria', 'nama_kriteria', 'jenis']));
 
         return redirect()->route('data-kriteria.index')->with('success', 'Kriteria berhasil diperbarui');
     }
@@ -73,21 +71,12 @@ class KriteriaController extends Controller
 
     public function hitungBobot(Request $request)
     {
-        $data = $request->input('data'); // Ambil data dari fetch
-        $totalSkala = array_sum(array_column($data, 'skala'));
+        $data = $request->input('data');
 
-        if ($totalSkala == 0) {
+        $hasil = Kriteria::prosesHitungBobot($data);
+
+        if (!$hasil) {
             return response()->json(['message' => 'Total skala tidak boleh nol.'], 400);
-        }
-
-        foreach ($data as $item) {
-            $bobot = $item['skala'] / $totalSkala;
-
-            Kriteria::where('id', $item['id'])->update([
-                'skala' => $item['skala'],
-                'bobot' => $bobot,
-                'status_bobot' => true
-            ]);
         }
 
         return response()->json(['message' => 'Bobot berhasil dihitung dan disimpan!']);
@@ -95,12 +84,7 @@ class KriteriaController extends Controller
 
     public function resetBobot()
     {
-        // Set kolom skala dan bobot menjadi null
-        Kriteria::query()->update([
-            'skala' => null,
-            'bobot' => null,
-            'status_bobot' => false
-        ]);
+        Kriteria::resetSemuaBobot();
 
         return response()->json(['message' => 'Bobot berhasil direset!']);
     }

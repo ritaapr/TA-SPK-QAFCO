@@ -17,6 +17,7 @@ class PenilaianHistori extends Model
         'kriteria_id',
         'subkriteria_id',
         'nilai',
+        'created_at',
     ];
 
     // Relasi ke CPMI

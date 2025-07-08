@@ -120,25 +120,27 @@
         }
 
         function bindKriteriaChange(row) {
-            row.querySelector('.kriteria-select').addEventListener('change', async function() {
-                const kriteriaId = this.value;
-                const subSelect = row.querySelector('.subkriteria-select');
-                subSelect.innerHTML = '<option value="">Memuat...</option>';
+    row.querySelector('.kriteria-select').addEventListener('change', async function() {
+        const kriteriaId = this.value;
+        const subSelect = row.querySelector('.subkriteria-select');
+        subSelect.innerHTML = '<option value="">Memuat...</option>';
 
-                const response = await fetch(`/get-subkriteria/${kriteriaId}`);
-                const subkriterias = await response.json();
+        const response = await fetch(`/get-subkriteria/${kriteriaId}`);
+        const subkriterias = await response.json();
 
-                subSelect.innerHTML = '<option value="">Pilih Subkriteria</option>';
-                subkriterias.forEach(sub => {
-                    const opt = document.createElement('option');
-                    opt.value = sub.id;
-                    opt.textContent = sub.nama_subkriteria;
-                    subSelect.appendChild(opt);
-                });
+        subSelect.innerHTML = '<option value="">Pilih Subkriteria</option>';
+        subkriterias.forEach(sub => {
+            const opt = document.createElement('option');
+            opt.value = sub.id;
+            opt.textContent = sub.nama_subkriteria;
+            subSelect.appendChild(opt);
+        });
+    });
 
-                subSelect.addEventListener('change', fetchTable);
-            });
-        }
+    // 👇 Pindah ke luar agar tetap aktif setelah muat ulang
+    row.querySelector('.subkriteria-select').addEventListener('change', fetchTable);
+}
+
 
 
         bindKriteriaChange(document.querySelector('.filter-row'));

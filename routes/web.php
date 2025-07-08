@@ -29,10 +29,12 @@ Route::put('/data-cpmi/{id}', [CpmiController::class, 'update'])->name('data-cpm
 Route::delete('/data-cpmi/{id}', [CpmiController::class, 'destroy'])->name('data-cpmi-copy.destroy');
 
 // Kriteria
-Route::resource('data-kriteria', KriteriaController::class);
-Route::post('/hitung-bobot', [KriteriaController::class, 'hitungBobot'])->name('kriteria.hitungBobot');
-Route::get('/kriteria/{id}/subkriteria', [KriteriaController::class, 'getSubkriteria']);
-Route::post('/reset-bobot', [KriteriaController::class, 'resetBobot'])->name('kriteria.resetBobot');
+Route::resource('data-kriteria', KriteriaController::class)->except(['show']);
+
+// Endpoint untuk hitung dan reset bobot
+Route::post('/data-kriteria/hitung-bobot', [KriteriaController::class, 'hitungBobot'])->name('kriteria.hitungBobot');
+Route::post('/data-kriteria/reset-bobot', [KriteriaController::class, 'resetBobot'])->name('kriteria.resetBobot');
+
 
 
 Route::middleware(['auth', 'role:superadmin'])->group(function () {
@@ -40,10 +42,14 @@ Route::middleware(['auth', 'role:superadmin'])->group(function () {
     // Data User
     Route::resource('users', UserController::class);
 
-    Route::get('/get-subkriteria/{id}', [KriteriaController::class, 'getSubkriteria']);
+    // Endpoint untuk ambil data subkriteria berdasarkan ID kriteria
+Route::get('/data-kriteria/{id}/subkriteria', [KriteriaController::class, 'getSubkriteria'])->name('kriteria.getSubkriteria');
     
+Route::get('/get-subkriteria/{id}', [SeleksiController::class, 'getSubkriteria']);
+
     Route::get('/hasilpenilaian', [SeleksiController::class, 'index'])->name('hasilpenilaian.index');
     Route::post('/hasilpenilaian/ajax-filter', [SeleksiController::class, 'ajaxFilter'])->name('hasilpenilaian.ajaxFilter');
+
 });
 
 Route::post('/rekomendasi', [RekomendasiController::class, 'store'])->name('rekomendasi.store');

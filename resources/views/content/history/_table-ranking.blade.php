@@ -11,7 +11,7 @@
                         <th>Ranking</th>
                         <th>Nama CPMI</th>
                         <th>Nilai SAW</th>
-                        <th>Aksi</th> {{-- Tambahkan kolom aksi --}}
+                        <th>Aksi</th> 
                     </tr>
                 </thead>
                 <tbody>
@@ -29,15 +29,14 @@
                                     <input type="hidden" name="ranking" value="{{ $index + 1 }}">
                                     <button type="button" class="btn btn-sm btn-primary btn-pilih">Pilih</button>
                                 </form>
-
-
-
                             </td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
+
+        
     </div>
 @else
     <div class="alert alert-warning">Tidak ada data yang sesuai dengan filter.</div>

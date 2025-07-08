@@ -244,7 +244,7 @@
                                     <label for="jenis" class="col-md-3 col-form-label">Jenis</label>
                                     <div class="col-md-9">
                                         <select class="form-select" id="jenis" name="jenis" required>
-                                            <option value="">-- Pilih Jenis --</option>
+                                            <option value="">Pilih Jenis</option>
                                             <option value="benefit">Benefit</option>
                                             <option value="cost">Cost</option>
                                         </select>
@@ -285,7 +285,7 @@
                                     <td>{{ ucfirst($kriteria->jenis) }}</td>
                                     <td>
                                         <select class="form-select skala-dropdown" {{ $bobotTerkunci ? 'disabled' : '' }}>
-                                            <option value="">-- Pilih Skala --</option>
+                                            <option value="">Pilih Skala</option>
                                             @for ($i = 1; $i <= 5; $i++)
                                                 <option value="{{ $i }}"
                                                     {{ $kriteria->skala == $i ? 'selected' : '' }}>{{ $i }}
@@ -311,22 +311,23 @@
                                         </button>
 
                                         @if (auth()->user()->role === 'superadmin')
-                                        <!-- Tombol Edit -->
-                                        <a href="{{ route('data-kriteria.edit', $kriteria->id) }}"
-                                            class="btn btn-sm btn-icon btn-primary me-1" title="Edit">
-                                            <i class="bx bx-edit-alt"></i>
-                                        </a>
+                                            <!-- Tombol Edit -->
+                                            <a href="{{ route('data-kriteria.edit', $kriteria->id) }}"
+                                                class="btn btn-sm btn-icon btn-primary me-1" title="Edit">
+                                                <i class="bx bx-edit-alt"></i>
+                                            </a>
 
-                                        <!-- Tombol Delete -->
-                                        <form method="POST" class="d-inline delete-form" data-id="{{ $kriteria->id }}"
-                                            data-action="{{ route('data-kriteria.destroy', $kriteria->id) }}">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="button" class="btn btn-sm btn-icon btn-danger btn-delete"
-                                                title="Delete">
-                                                <i class="bx bx-trash"></i>
-                                            </button>
-                                        </form>
+                                            <!-- Tombol Delete -->
+                                            <form method="POST" class="d-inline delete-form"
+                                                data-id="{{ $kriteria->id }}"
+                                                data-action="{{ route('data-kriteria.destroy', $kriteria->id) }}">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="button" class="btn btn-sm btn-icon btn-danger btn-delete"
+                                                    title="Delete">
+                                                    <i class="bx bx-trash"></i>
+                                                </button>
+                                            </form>
                                         @endif
                                     </td>
                                 </tr>
@@ -395,15 +396,15 @@
                 </div>
             </div>
             @if (auth()->user()->role === 'superadmin')
-            <button type="button" id="hitungsemua" class="btn btn-outline-primary"
-                {{ $bobotTerkunci ? 'disabled class=disabled' : '' }}>
-                <span class="tf-icons bx {{ $bobotTerkunci ? 'bx-lock' : 'bx-calculator' }} me-1"></span>
-                {{ $bobotTerkunci ? 'Bobot Terkunci' : 'Hitung' }}
-            </button>
+                <button type="button" id="hitungsemua" class="btn btn-outline-primary"
+                    {{ $bobotTerkunci ? 'disabled class=disabled' : '' }}>
+                    <span class="tf-icons bx {{ $bobotTerkunci ? 'bx-lock' : 'bx-calculator' }} me-1"></span>
+                    {{ $bobotTerkunci ? 'Bobot Terkunci' : 'Hitung' }}
+                </button>
 
-            <button type="button" id="resetBobot" class="btn btn-outline-danger mt-2 ms-2">
-                <span class="tf-icons bx bx-reset me-1"></span> Reset Bobot
-            </button>
+                <button type="button" id="resetBobot" class="btn btn-outline-danger mt-2 ms-2">
+                    <span class="tf-icons bx bx-reset me-1"></span> Reset Bobot
+                </button>
             @endif
 
         </div>
@@ -438,7 +439,7 @@
                     subList.innerHTML = '<tr><td colspan="2">Memuat...</td></tr>';
 
                     try {
-                        const response = await fetch(`/kriteria/${id}/subkriteria`);
+                        const response = await fetch(`/data-kriteria/${id}/subkriteria`);
                         const data = await response.json();
 
                         if (data.length > 0) {

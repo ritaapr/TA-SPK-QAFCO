@@ -17,7 +17,7 @@ class SAWHelper
             if ($item->subkriteria) {
                 $matrix[$cpmiId][$kriteriaId] = $item->subkriteria->nilai;
             } else {
-                $matrix[$cpmiId][$kriteriaId] = null; // null agar bisa dideteksi
+                $matrix[$cpmiId][$kriteriaId] = null; 
                 $errors[] = "CPMI ID <strong>{$cpmiId}</strong> belum memiliki penilaian untuk kriteria ID <strong>{$kriteriaId}</strong>.";
             }
         }

@@ -43,15 +43,21 @@
                                 </td>
                                 <td>
                                     @if ($cpmi->penilaian->isNotEmpty())
-                                        <!-- Edit dan Hapus -->
+                                        <!-- Edit-->
                                         <button type="button" class="btn btn-sm btn-icon btn-primary me-1 btn-open-modal"
                                             title="Edit Penilaian" data-mode="edit" data-cpmi-id="{{ $cpmi->id }}"
                                             data-cpmi-nama="{{ $cpmi->nama_cpmi }}"
                                             @foreach ($kriteriaList as $kriteria)
-                    data-kriteria-{{ $kriteria->id }}="{{ $cpmi->penilaian->firstWhere('kriteria_id', $kriteria->id)?->subkriteria_id }}" @endforeach>
+        @php
+            $pen = $cpmi->penilaian->firstWhere('kriteria_id', $kriteria->id);
+            $isRange = $kriteria->subkriterias->first()?->batas_bawah !== null;
+            $value = $isRange ? $pen?->nilai_input : $pen?->subkriteria_id;
+        @endphp
+        data-kriteria-{{ $kriteria->id }}="{{ $value }}" @endforeach>
                                             <i class="bx bx-edit-alt"></i>
                                         </button>
 
+                                        <!-- Hapus -->
                                         <form method="POST" class="d-inline delete-form"
                                             action="{{ route('penilaian.destroy', $cpmi->id) }}">
                                             @csrf

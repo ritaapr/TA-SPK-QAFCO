@@ -51,7 +51,7 @@ class RekomendasiController extends Controller
             Penilaian::where('cpmi_id', $cpmiId)->delete();
         }
 
-        return redirect()->back()->with('success', 'CPMI berhasil direkomendasikan dan dicatat ke histori.');
+        return redirect()->back()->with('success', 'CPMI berhasil direkomendasikan.');
     }
 
     public function index()
@@ -74,9 +74,37 @@ class RekomendasiController extends Controller
     
 
     public function arsipkan()
-    {
-        Rekomendasi::truncate();
+{
+    // Ambil semua data rekomendasi
+    $rekomendasiList = Rekomendasi::all();
 
-        return redirect()->route('rekomendasi.index')->with('success', 'Rekomendasi berhasil direset. Silakan lakukan seleksi ulang.');
+    foreach ($rekomendasiList as $rekom) {
+        $cpmiId = $rekom->cpmi_id;
+
+        // Ambil semua penilaian yang sesuai dengan cpmi_id ini
+        $penilaianList = Penilaian::where('cpmi_id', $cpmiId)->get();
+
+        foreach ($penilaianList as $penilaian) {
+            // Simpan ke histori penilaian
+            PenilaianHistori::create([
+                'cpmi_id'        => $cpmiId,
+                'kriteria_id'    => $penilaian->kriteria_id,
+                'subkriteria_id' => $penilaian->subkriteria_id,
+                'nilai'          => optional($penilaian->subkriteria)->nilai,
+                'user_id'        => $penilaian->user_id,
+                'created_at'     => now(),
+            ]);
+        }
+
+        // Hapus penilaian aktif
+        Penilaian::where('cpmi_id', $cpmiId)->delete();
     }
+
+    // Hapus data rekomendasi setelah disalin
+    Rekomendasi::truncate();
+
+    return redirect()->route('rekomendasi.index')->with('success', 'Data berhasil diarsipkan dan dipindahkan ke histori.');
+}
+
+
 }

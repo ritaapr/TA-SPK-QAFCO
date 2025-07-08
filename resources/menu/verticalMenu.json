@@ -68,9 +68,6 @@
       "slug": "rekomendasi.index"
     },
     {
-      "menuHeader": "Riwayat"
-    },
-    {
       "url": "/rekomendasi-histori",
       "icon": "menu-icon tf-icons bx bx-history",
       "name": "Riwayat Penilaian",
